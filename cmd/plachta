@@ -40,6 +40,7 @@ EOF
 
 source "${ROOT_DIR}/lib/config.sh"
 source "${ROOT_DIR}/lib/module.sh"
+source "${ROOT_DIR}/lib/logger.sh"
 
 config_init
 case "${1:-help}" in
@@ -58,7 +59,9 @@ case "${1:-help}" in
         exit 1
     fi
 
+    log_info "Installing module: $2"
     module_install "$2"
+    log_success "Install finished."
     ;;
 
     update)
@@ -71,7 +74,9 @@ case "${1:-help}" in
 
     verify)
     if [[ -n "${2:-}" ]]; then
+        log_info "Verifying module: $2"
         module_verify "$2"
+        log_success "Verify finished."
     else
         echo "Usage:"
         echo "  plachta verify <module>"
@@ -87,7 +92,7 @@ case "${1:-help}" in
             ;;
         set)
             config_set "$3" "$4"
-            echo "Saved."
+            log_success "Configuration updated."
             ;;
         *)
             echo "Usage:"

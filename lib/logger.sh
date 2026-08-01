@@ -1,57 +1,21 @@
 #!/usr/bin/env bash
-#
-# Plachta Logger Library
-#
 
-source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
-
-########################################
-# Logger Configuration
-########################################
-
-LOG_LEVEL="${LOG_LEVEL:-INFO}"
-
-########################################
-# Internal
-########################################
-
-_log() {
-
-    local level="$1"
-    shift
-
-    local message="$*"
-
-    local timestamp
-    timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
-
-    echo "[$timestamp] [$level] $message"
+log_time() {
+    date "+%Y-%m-%d %H:%M:%S"
 }
 
-########################################
-# Public APIs
-########################################
-
-logger_info() {
-
-    _log INFO "$@"
-
+log_info() {
+    echo "[INFO ] $(log_time) $*"
 }
 
-logger_warn() {
-
-    _log WARN "$@"
-
+log_warn() {
+    echo "[WARN ] $(log_time) $*"
 }
 
-logger_error() {
-
-    _log ERROR "$@"
-
+log_error() {
+    echo "[ERROR] $(log_time) $*" >&2
 }
 
-logger_success() {
-
-    _log SUCCESS "$@"
-
+log_success() {
+    echo "[ OK  ] $(log_time) $*"
 }

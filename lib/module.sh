@@ -10,7 +10,7 @@ module_install() {
     local module="$1"
 
     if ! module_exists "$module"; then
-        echo "Module '$module' not found."
+        log_error "Module '$module' not found."
         return 1
     fi
 
@@ -21,7 +21,7 @@ module_verify() {
     local module="$1"
 
     if ! module_exists "$module"; then
-        echo "Module '$module' not found."
+        log_error "Module '$module' not found."
         return 1
     fi
 
@@ -32,7 +32,7 @@ module_service() {
     local module="$1"
 
     if ! module_exists "$module"; then
-        echo "Module '$module' not found."
+       log_error "Module '$module' not found."
         return 1
     fi
 
@@ -43,7 +43,7 @@ module_config() {
     local module="$1"
 
     if ! module_exists "$module"; then
-        echo "Module '$module' not found."
+        log_error "Module '$module' not found."
         return 1
     fi
 
