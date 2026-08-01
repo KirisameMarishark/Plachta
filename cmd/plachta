@@ -39,6 +39,7 @@ EOF
 }
 
 source "${ROOT_DIR}/lib/config.sh"
+source "${ROOT_DIR}/lib/module.sh"
 
 config_init
 case "${1:-help}" in
@@ -51,8 +52,14 @@ case "${1:-help}" in
         ;;
 
     install)
-        echo "Install module (coming soon)"
-        ;;
+    if [[ -z "${2:-}" ]]; then
+        echo "Usage:"
+        echo "  plachta install <module>"
+        exit 1
+    fi
+
+    module_install "$2"
+    ;;
 
     update)
         echo "Update module (coming soon)"
@@ -63,8 +70,13 @@ case "${1:-help}" in
         ;;
 
     verify)
-        echo "Verify module (coming soon)"
-        ;;
+    if [[ -n "${2:-}" ]]; then
+        module_verify "$2"
+    else
+        echo "Usage:"
+        echo "  plachta verify <module>"
+    fi
+    ;;
     config)
     case "${2:-show}" in
         show)
@@ -85,6 +97,9 @@ case "${1:-help}" in
             ;;
     esac
     ;;
+    modules)
+        module_list
+        ;;
     backup)
         echo "Backup module (coming soon)"
         ;;
