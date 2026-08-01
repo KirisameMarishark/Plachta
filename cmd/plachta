@@ -1,0 +1,53 @@
+#!/bin/bash
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+
+case "$1" in
+
+    install)
+        bash "$ROOT_DIR/scripts/install/install.sh"
+        ;;
+
+    doctor)
+        bash "$ROOT_DIR/internal/doctor/run.sh"
+        ;;
+
+    update)
+        bash "$ROOT_DIR/internal/updater/run.sh"
+        ;;
+
+    backup)
+        bash "$ROOT_DIR/internal/backup/run.sh"
+        ;;
+
+    verify)
+        bash "$ROOT_DIR/internal/verify/run.sh"
+        ;;
+
+    health)
+        bash "$ROOT_DIR/internal/health/run.sh"
+        ;;
+
+    version)
+        cat "$ROOT_DIR/VERSION"
+        ;;
+
+    *)
+        cat <<HELP
+
+Plachta
+
+Usage:
+
+plachta install
+plachta doctor
+plachta verify
+plachta update
+plachta backup
+plachta health
+plachta version
+
+HELP
+        ;;
+esac
