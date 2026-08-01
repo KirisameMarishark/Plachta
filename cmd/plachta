@@ -1,53 +1,76 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(dirname "$SCRIPT_DIR")"
+set -euo pipefail
 
-case "$1" in
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+VERSION_FILE="${ROOT_DIR}/VERSION"
 
-    install)
-        bash "$ROOT_DIR/scripts/install/install.sh"
+get_version() {
+    if [[ -f "${VERSION_FILE}" ]]; then
+        cat "${VERSION_FILE}"
+    else
+        echo "unknown"
+    fi
+}
+
+show_banner() {
+    echo
+    echo "Plachta $(get_version)"
+    echo "Proxy Infrastructure Framework"
+    echo
+}
+
+show_help() {
+    show_banner
+
+    cat <<EOF
+Usage:
+  plachta <command>
+
+Commands:
+  install      Install Plachta modules
+  update       Update installed components
+  doctor       Diagnose system status
+  verify       Verify configuration
+  backup       Backup configuration
+  version      Show version
+  help         Show this help
+EOF
+}
+
+case "${1:-help}" in
+    version|-v|--version)
+        echo "Plachta $(get_version)"
         ;;
 
-    doctor)
-        bash "$ROOT_DIR/internal/doctor/run.sh"
+    help|-h|--help)
+        show_help
+        ;;
+
+    install)
+        echo "Install module (coming soon)"
         ;;
 
     update)
-        bash "$ROOT_DIR/internal/updater/run.sh"
+        echo "Update module (coming soon)"
         ;;
 
-    backup)
-        bash "$ROOT_DIR/internal/backup/run.sh"
+    doctor)
+        echo "Doctor module (coming soon)"
         ;;
 
     verify)
-        bash "$ROOT_DIR/internal/verify/run.sh"
+        echo "Verify module (coming soon)"
         ;;
 
-    health)
-        bash "$ROOT_DIR/internal/health/run.sh"
-        ;;
-
-    version)
-        cat "$ROOT_DIR/VERSION"
+    backup)
+        echo "Backup module (coming soon)"
         ;;
 
     *)
-        cat <<HELP
-
-Plachta
-
-Usage:
-
-plachta install
-plachta doctor
-plachta verify
-plachta update
-plachta backup
-plachta health
-plachta version
-
-HELP
+        echo "Unknown command: $1"
+        echo
+        show_help
+        exit 1
         ;;
 esac
