@@ -38,6 +38,9 @@ Commands:
 EOF
 }
 
+source "${ROOT_DIR}/lib/config.sh"
+
+config_init
 case "${1:-help}" in
     version|-v|--version)
         echo "Plachta $(get_version)"
@@ -62,7 +65,26 @@ case "${1:-help}" in
     verify)
         echo "Verify module (coming soon)"
         ;;
-
+    config)
+    case "${2:-show}" in
+        show)
+            cat "${CONFIG_FILE}"
+            ;;
+        get)
+            config_get "$3"
+            ;;
+        set)
+            config_set "$3" "$4"
+            echo "Saved."
+            ;;
+        *)
+            echo "Usage:"
+            echo "  plachta config show"
+            echo "  plachta config get <key>"
+            echo "  plachta config set <key> <value>"
+            ;;
+    esac
+    ;;
     backup)
         echo "Backup module (coming soon)"
         ;;
