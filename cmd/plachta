@@ -41,6 +41,7 @@ EOF
 source "${ROOT_DIR}/lib/config.sh"
 source "${ROOT_DIR}/lib/module.sh"
 source "${ROOT_DIR}/lib/logger.sh"
+source "${ROOT_DIR}/lib/metadata.sh"
 
 config_init
 case "${1:-help}" in
@@ -105,6 +106,15 @@ case "${1:-help}" in
     modules)
         module_list
         ;;
+    module-info)
+    if [[ -z "${2:-}" ]]; then
+        echo "Usage:"
+        echo "  plachta module-info <module>"
+        exit 1
+    fi
+
+    module_info "$2"
+    ;;
     backup)
         echo "Backup module (coming soon)"
         ;;
