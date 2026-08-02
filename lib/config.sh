@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-
+DEFAULT_CONFIG="${ROOT_DIR}/configs/default/plachta.conf"
 CONFIG_DIR="${HOME}/.config/plachta"
 CONFIG_FILE="${CONFIG_DIR}/config.conf"
 
