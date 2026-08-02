@@ -3,10 +3,10 @@
 xray_verify() {
 
     if command -v xray >/dev/null 2>&1; then
-        success "Xray detected."
+        xray version
         return 0
     fi
 
-    die "Xray is not installed."
+    die "Xray not installed."
 
 }

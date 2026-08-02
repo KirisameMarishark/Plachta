@@ -1,10 +1,3 @@
-#!/usr/bin/env bash
-
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
-
-source "${ROOT_DIR}/internal/xray/download.sh"
-
 xray_install() {
 
     xray_download
@@ -14,5 +7,11 @@ xray_install() {
     unzip -o \
         "${ROOT_DIR}/runtime/Xray-linux-64.zip" \
         -d "${ROOT_DIR}/runtime/xray"
+
+    install -Dm755 \
+        "${ROOT_DIR}/runtime/xray/xray" \
+        /usr/local/bin/xray
+
+    info "Xray installed to /usr/local/bin/xray"
 
 }
