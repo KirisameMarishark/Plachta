@@ -25,6 +25,10 @@ module_verify() {
         return 1
     fi
 
+    export ROOT_DIR
+
+    source "${ROOT_DIR}/lib/logger.sh"
+
     bash "${MODULES_DIR}/${module}/verify.sh"
 }
 
