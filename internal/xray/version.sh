@@ -1,11 +1,16 @@
 #!/usr/bin/env bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
-XRAY_VERSION=""
+source "${ROOT_DIR}/lib/github.sh"
 
-xray_version_set() {
-    XRAY_VERSION="$1"
-}
+XRAY_REPO="XTLS/Xray-core"
 
-xray_version_get() {
-    echo "${XRAY_VERSION}"
+xray_latest_version() {
+
+    github_latest_release "${XRAY_REPO}" \
+        | grep '"tag_name":' \
+        | head -n1 \
+        | cut -d '"' -f4
+
 }
