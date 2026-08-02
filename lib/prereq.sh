@@ -63,17 +63,9 @@ require_package() {
 }
 
 ensure_service_enabled() {
-    local svc="$1"
-
-    systemctl enable "$svc"
-
-    log_success "Service '$svc' enabled."
+    service_enable "$1"
 }
 
 ensure_service_running() {
-    local svc="$1"
-
-    systemctl restart "$svc"
-
-    log_success "Service '$svc' started."
+    service_start "$1"
 }
