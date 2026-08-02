@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
+source "${ROOT_DIR}/lib/logger.sh"
 download_has_curl() {
     command -v curl >/dev/null 2>&1
 }
