@@ -47,9 +47,17 @@ source "${ROOT_DIR}/lib/service.sh"
 source "${ROOT_DIR}/lib/package.sh"
 export ROOT_DIR
 source "${ROOT_DIR}/lib/metadata.sh"
-
+source "${ROOT_DIR}/lib/system.sh"
 config_init
 case "${1:-help}" in
+    system)
+
+    echo "Operating System : $(system_os)"
+    echo "Version          : $(system_version)"
+    echo "Architecture     : $(system_arch)"
+    echo "Kernel           : $(system_kernel)"
+    echo "Hostname         : $(system_hostname)"
+    ;;
     version|-v|--version)
         echo "Plachta $(get_version)"
         ;;
