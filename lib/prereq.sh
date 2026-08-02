@@ -2,7 +2,7 @@
 
 require_root() {
     if [[ "${EUID}" -ne 0 ]]; then
-        log_error "Please run as root."
+        die "Please run as root."
         exit 1
     fi
 
@@ -11,15 +11,13 @@ require_root() {
 
 require_debian() {
     if [[ ! -f /etc/os-release ]]; then
-        log_error "Cannot determine operating system."
-        exit 1
+        die "Cannot determine operating system."
     fi
 
     source /etc/os-release
 
     if [[ "${ID}" != "debian" ]]; then
-        log_error "Only Debian is supported."
-        exit 1
+        die "Only Debian is supported."   
     fi
 
     log_success "Operating system: Debian"
@@ -27,8 +25,7 @@ require_debian() {
 
 require_systemd() {
     if ! command -v systemctl >/dev/null 2>&1; then
-        log_error "systemd is required."
-        exit 1
+        die "systemd is required."    
     fi
 
     log_success "systemd detected."

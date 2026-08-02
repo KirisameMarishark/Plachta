@@ -41,6 +41,7 @@ EOF
 source "${ROOT_DIR}/lib/config.sh"
 source "${ROOT_DIR}/lib/module.sh"
 source "${ROOT_DIR}/lib/logger.sh"
+source "${ROOT_DIR}/lib/error.sh"
 source "${ROOT_DIR}/lib/prereq.sh"
 source "${ROOT_DIR}/lib/service.sh"
 source "${ROOT_DIR}/lib/package.sh"
