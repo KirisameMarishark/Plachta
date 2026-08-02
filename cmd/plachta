@@ -48,6 +48,7 @@ source "${ROOT_DIR}/lib/package.sh"
 export ROOT_DIR
 source "${ROOT_DIR}/lib/metadata.sh"
 source "${ROOT_DIR}/lib/system.sh"
+source "${ROOT_DIR}/lib/download.sh"
 config_init
 case "${1:-help}" in
     system)
