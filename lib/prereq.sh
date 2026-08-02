@@ -46,22 +46,8 @@ require_command() {
 }
 
 require_package() {
-    local pkg="$1"
-
-    if dpkg -s "$pkg" >/dev/null 2>&1; then
-        log_success "Package '$pkg' already installed."
-        return 0
-    fi
-
-    log_warn "Installing package '$pkg'..."
-
-    apt-get update
-
-    apt-get install -y "$pkg"
-
-    log_success "Package '$pkg' installed."
+    package_install "$1"
 }
-
 ensure_service_enabled() {
     service_enable "$1"
 }
