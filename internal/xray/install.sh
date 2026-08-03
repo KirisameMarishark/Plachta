@@ -12,6 +12,6 @@ xray_install() {
         "${ROOT_DIR}/runtime/xray/xray" \
         /usr/local/bin/xray
 
-    info "Xray installed to /usr/local/bin/xray"
+    log_info "Xray installed to /usr/local/bin/xray"
 
 }
