@@ -11,6 +11,9 @@ source "${ROOT_DIR}/lib/prereq.sh"
 source "${ROOT_DIR}/internal/xray/download.sh"
 source "${ROOT_DIR}/internal/xray/install.sh"
 source "${ROOT_DIR}/internal/xray/service.sh"
+
+MODULES_DIR="${ROOT_DIR}/modules"
+
 source "${MODULES_DIR}/reality/config.sh"
 
 require_root
@@ -19,6 +22,7 @@ require_systemd
 
 xray_download
 xray_install
+generate_reality_config
 xray_install_service
 
 log_success "Reality installation completed."
