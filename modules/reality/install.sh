@@ -10,6 +10,7 @@ source "${ROOT_DIR}/lib/prereq.sh"
 
 source "${ROOT_DIR}/internal/xray/download.sh"
 source "${ROOT_DIR}/internal/xray/install.sh"
+source "${ROOT_DIR}/internal/xray/service.sh"
 
 require_root
 require_debian
@@ -17,5 +18,6 @@ require_systemd
 
 xray_download
 xray_install
+xray_install_service
 
 log_success "Reality installation completed."
