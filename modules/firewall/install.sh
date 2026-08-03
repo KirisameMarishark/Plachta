@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+
+source "${ROOT_DIR}/lib/common.sh"
+source "${ROOT_DIR}/lib/logger.sh"
+source "${ROOT_DIR}/lib/prereq.sh"
+source "${ROOT_DIR}/lib/package.sh"
+source "${ROOT_DIR}/lib/service.sh"
+
+MODULES_DIR="${ROOT_DIR}/modules"
 
 require_root
 require_debian
