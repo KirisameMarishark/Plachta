@@ -27,4 +27,5 @@ EOF
     systemctl daemon-reload
 
     ensure_service_enabled xray
+    ensure_service_running xray
 }
