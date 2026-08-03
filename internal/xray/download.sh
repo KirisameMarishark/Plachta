@@ -14,6 +14,8 @@ xray_download() {
     local file="Xray-linux-64.zip"
 
     local url="https://github.com/XTLS/Xray-core/releases/download/${version}/${file}"
+   
+    log_info "Download URL: ${url}"
 
     mkdir -p "${ROOT_DIR}/runtime"
 
