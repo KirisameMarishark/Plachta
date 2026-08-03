@@ -11,6 +11,7 @@ source "${ROOT_DIR}/lib/prereq.sh"
 source "${ROOT_DIR}/internal/xray/download.sh"
 source "${ROOT_DIR}/internal/xray/install.sh"
 source "${ROOT_DIR}/internal/xray/service.sh"
+source "${MODULES_DIR}/reality/config.sh"
 
 require_root
 require_debian
