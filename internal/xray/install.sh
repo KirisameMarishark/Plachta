@@ -1,6 +1,5 @@
 xray_install() {
 
-    xray_download
 
     mkdir -p "${ROOT_DIR}/runtime/xray"
 
