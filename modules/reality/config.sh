@@ -28,7 +28,38 @@ generate_reality_config() {
   "log": {
     "loglevel": "warning"
   },
-  "inbounds": [],
+  "inbounds": [
+    {
+      "listen": "0.0.0.0",
+      "port": 443,
+      "protocol": "vless",
+      "settings": {
+        "clients": [
+          {
+            "id": "$uuid",
+            "flow": "xtls-rprx-vision"
+          }
+        ],
+        "decryption": "none"
+      },
+      "streamSettings": {
+        "network": "tcp",
+        "security": "reality",
+        "realitySettings": {
+          "show": false,
+          "dest": "www.cloudflare.com:443",
+          "xver": 0,
+          "serverNames": [
+            "www.cloudflare.com"
+          ],
+          "privateKey": "$private_key",
+          "shortIds": [
+            "$shortid"
+          ]
+        }
+      }
+    }
+  ],
   "outbounds": [
     {
       "protocol": "freedom"
