@@ -23,7 +23,7 @@ generate_reality_config() {
     echo "HASH=$hash32"
     echo "SHORTID=$shortid"
 
-    cat >/etc/plachta/reality/config.json <<'EOF'
+    cat >/etc/plachta/reality/config.json <<EOF
 {
   "log": {
     "loglevel": "warning"
