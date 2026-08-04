@@ -31,6 +31,7 @@ Commands:
   install      Install Plachta modules
   update       Update installed components
   doctor       Diagnose system status
+  show         Show runtime information
   verify       Verify configuration
   backup       Backup configuration
   version      Show version
@@ -49,6 +50,8 @@ export ROOT_DIR
 source "${ROOT_DIR}/lib/metadata.sh"
 source "${ROOT_DIR}/lib/system.sh"
 source "${ROOT_DIR}/lib/download.sh"
+source "${ROOT_DIR}/internal/show/reality.sh"
+
 config_init
 case "${1:-help}" in
     system)
@@ -97,6 +100,19 @@ case "${1:-help}" in
         echo "  plachta verify <module>"
     fi
     ;;
+
+    show)
+        case "${2:-}" in
+            reality)
+                show_reality
+                ;;
+            *)
+                echo "Usage:"
+                echo "  plachta show reality"
+                ;;
+        esac
+        ;;
+        
     config)
     case "${2:-show}" in
         show)
