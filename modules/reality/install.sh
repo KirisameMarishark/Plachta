@@ -4,6 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
+source "${ROOT_DIR}/internal/show/reality.sh"
 source "${ROOT_DIR}/lib/common.sh"
 source "${ROOT_DIR}/lib/logger.sh"
 source "${ROOT_DIR}/lib/prereq.sh"
@@ -29,5 +30,8 @@ xray_download
 xray_install
 generate_reality_config
 xray_install_service
+
+echo
+show_reality
 
 log_success "Reality installation completed."
