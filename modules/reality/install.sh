@@ -7,6 +7,7 @@ ROOT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 source "${ROOT_DIR}/lib/common.sh"
 source "${ROOT_DIR}/lib/logger.sh"
 source "${ROOT_DIR}/lib/prereq.sh"
+source "${ROOT_DIR}/lib/package.sh"
 
 source "${ROOT_DIR}/internal/xray/download.sh"
 source "${ROOT_DIR}/internal/xray/install.sh"
