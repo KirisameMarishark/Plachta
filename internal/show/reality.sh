@@ -25,11 +25,14 @@ show_reality() {
     echo "ServerName : ${SERVER_NAME}"
     echo "Short ID   : ${SHORT_ID}"
     echo
-
+   
+    local uri="vless://${UUID}@${server_ip}:${PORT}?type=tcp&security=reality&pbk=${PUBLIC_KEY}&sid=${SHORT_ID}&sni=${SERVER_NAME}&fp=chrome&flow=xtls-rprx-vision&encryption=none#Plachta-Reality"
+    
     echo "Import URI:"
     echo
-    echo "vless://${UUID}@${server_ip}:${PORT}?type=tcp&security=reality&pbk=${PUBLIC_KEY}&sid=${SHORT_ID}&sni=${SERVER_NAME}&fp=chrome&flow=xtls-rprx-vision&encryption=none#Plachta-Reality"
+    echo "$uri"
     echo
+
     echo "QR Code"
     echo "------------------------------"
 
@@ -37,5 +40,5 @@ show_reality() {
         qrencode -t ANSIUTF8 "$uri"
     else
         echo "qrencode not installed."
-fi
+    fi
 }
