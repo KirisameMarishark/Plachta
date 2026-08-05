@@ -23,6 +23,7 @@ require_debian
 require_systemd
 
 package_install jq
+package_install qrencode
 
 xray_download
 xray_install

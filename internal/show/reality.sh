@@ -29,4 +29,13 @@ show_reality() {
     echo "Import URI:"
     echo
     echo "vless://${UUID}@${server_ip}:${PORT}?type=tcp&security=reality&pbk=${PUBLIC_KEY}&sid=${SHORT_ID}&sni=${SERVER_NAME}&fp=chrome&flow=xtls-rprx-vision&encryption=none#Plachta-Reality"
+    echo
+    echo "QR Code"
+    echo "------------------------------"
+
+    if command -v qrencode >/dev/null 2>&1; then
+        qrencode -t ANSIUTF8 "$uri"
+    else
+        echo "qrencode not installed."
+fi
 }
