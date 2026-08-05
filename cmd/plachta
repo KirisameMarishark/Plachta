@@ -52,6 +52,7 @@ source "${ROOT_DIR}/lib/system.sh"
 source "${ROOT_DIR}/lib/download.sh"
 source "${ROOT_DIR}/internal/show/reality.sh"
 source "${ROOT_DIR}/internal/verify/reality.sh"
+source "${ROOT_DIR}/internal/json.sh"
 
 config_init
 case "${1:-help}" in
