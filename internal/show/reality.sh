@@ -37,8 +37,20 @@ show_reality() {
     echo "------------------------------"
 
     if command -v qrencode >/dev/null 2>&1; then
-        qrencode -t ANSIUTF8 "$uri"
-    else
-        echo "qrencode not installed."
-    fi
+
+    qrencode -t ANSIUTF8 "$uri"
+
+    qrencode -o /etc/plachta/reality/reality.png \
+        -s 8 \
+        -m 2 \
+        "$uri"
+
+    echo
+    echo "PNG QR Code"
+    echo "------------------------------"
+    echo "/etc/plachta/reality/reality.png"
+
+else
+    echo "qrencode not installed."
+fi
 }
