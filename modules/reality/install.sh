@@ -21,6 +21,8 @@ require_root
 require_debian
 require_systemd
 
+package_install jq
+
 xray_download
 xray_install
 generate_reality_config
