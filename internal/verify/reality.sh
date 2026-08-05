@@ -1,59 +1,120 @@
-#!/usr/bin/env bash
-set -euo pipefail
-
 verify_reality() {
-    local failed=0
+    local pass=0
+    local fail=0
+
+    CONFIG="/etc/plachta/reality/config.json"
 
     echo "Reality Verify"
     echo "------------------------------"
 
-    # Config
-    if [[ -f /etc/plachta/reality/config.json ]]; then
-        echo "✔ Config exists"
+    check() {
+        if "$@"; then
+            return 0
+        fi
+        return 1
+    }
+
+    ok() {
+        echo "✔ $1"
+        ((pass++))
+    }
+
+    bad() {
+        echo "✘ $1"
+        ((fail++))
+    }
+
+    # jq
+    if command -v jq >/dev/null 2>&1; then
+        ok "jq installed"
     else
-        echo "✘ Config missing"
-        failed=1
+        bad "jq missing"
     fi
 
-    # Xray binary
-    if command -v xray >/dev/null 2>&1; then
-        echo "✔ Xray installed"
+    # Config
+    if [[ -f "$CONFIG" ]]; then
+        ok "Config exists"
     else
-        echo "✘ Xray not installed"
-        failed=1
+        bad "Config missing"
+    fi
+
+    # JSON
+    if jq empty "$CONFIG" >/dev/null 2>&1; then
+        ok "JSON valid"
+    else
+        bad "JSON invalid"
+    fi
+
+    # UUID
+    if [[ -n "$(jq -r '.inbounds[0].settings.clients[0].id' "$CONFIG")" ]]; then
+        ok "UUID found"
+    else
+        bad "UUID missing"
+    fi
+
+    # PrivateKey
+    if [[ -n "$(jq -r '.inbounds[0].streamSettings.realitySettings.privateKey' "$CONFIG")" ]]; then
+        ok "PrivateKey found"
+    else
+        bad "PrivateKey missing"
+    fi
+
+    # ShortID
+    if [[ -n "$(jq -r '.inbounds[0].streamSettings.realitySettings.shortIds[0]' "$CONFIG")" ]]; then
+        ok "ShortID found"
+    else
+        bad "ShortID missing"
+    fi
+
+    # PublicKey
+    if xray x25519 -i "$(jq -r '.inbounds[0].streamSettings.realitySettings.privateKey' "$CONFIG")" \
+        >/dev/null 2>&1; then
+        ok "PrivateKey usable"
+    else
+        bad "PrivateKey invalid"
+    fi
+
+    # Reality
+    if [[ "$(jq -r '.inbounds[0].streamSettings.security' "$CONFIG")" == "reality" ]]; then
+        ok "Reality inbound"
+    else
+        bad "Reality inbound missing"
+    fi
+
+    # Xray
+    if command -v xray >/dev/null 2>&1; then
+        ok "Xray installed"
+    else
+        bad "Xray missing"
     fi
 
     # Service
     if systemctl is-active --quiet xray; then
-        echo "✔ Xray running"
+        ok "Xray running"
     else
-        echo "✘ Xray stopped"
-        failed=1
+        bad "Xray stopped"
     fi
 
     # Port
-    if ss -lnt | grep -q ':443 '; then
-        echo "✔ Port 443 listening"
+    if ss -lntp | grep -q 'xray'; then
+        ok "Port 443 listening"
     else
-        echo "✘ Port 443 not listening"
-        failed=1
-    fi
-
-    # Config syntax
-    if xray run -test -config /etc/plachta/reality/config.json >/dev/null 2>&1; then
-        echo "✔ Config valid"
-    else
-        echo "✘ Config invalid"
-        failed=1
+        bad "Port 443 not listening"
     fi
 
     echo
+    echo "Result"
+    echo "------------------------------"
+    echo "Passed : $pass"
+    echo "Failed : $fail"
 
-    if [[ $failed -eq 0 ]]; then
+    if [[ $fail -eq 0 ]]; then
+        echo
         echo "Reality looks good."
         return 0
     fi
 
+    echo
     echo "Reality has problems."
     return 1
 }
