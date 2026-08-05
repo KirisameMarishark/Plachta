@@ -51,6 +51,7 @@ source "${ROOT_DIR}/lib/metadata.sh"
 source "${ROOT_DIR}/lib/system.sh"
 source "${ROOT_DIR}/lib/download.sh"
 source "${ROOT_DIR}/internal/show/reality.sh"
+source "${ROOT_DIR}/internal/verify/reality.sh"
 
 config_init
 case "${1:-help}" in
@@ -90,17 +91,23 @@ case "${1:-help}" in
         echo "Doctor module (coming soon)"
         ;;
 
-    verify)
-    if [[ -n "${2:-}" ]]; then
-        log_info "Verifying module: $2"
-        module_verify "$2"
-        log_success "Verify finished."
-    else
+   verify)
+    if [[ -z "${2:-}" ]]; then
         echo "Usage:"
-        echo "  plachta verify <module>"
+        echo "  plachta verify reality"
+        exit 1
     fi
-    ;;
 
+    case "$2" in
+        reality)
+            verify_reality
+            ;;
+        *)
+            module_verify "$2"
+            ;;
+    esac
+    ;;
+    
     show)
         case "${2:-}" in
             reality)
