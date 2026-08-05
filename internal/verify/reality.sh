@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
 verify_reality() {
     local pass=0
     local fail=0
@@ -6,13 +9,6 @@ verify_reality() {
 
     echo "Reality Verify"
     echo "------------------------------"
-
-    check() {
-        if "$@"; then
-            return 0
-        fi
-        return 1
-    }
 
     ok() {
         echo "✔ $1"
@@ -66,9 +62,8 @@ verify_reality() {
         bad "ShortID missing"
     fi
 
-    # PublicKey
-    if xray x25519 -i "$(jq -r '.inbounds[0].streamSettings.realitySettings.privateKey' "$CONFIG")" \
-        >/dev/null 2>&1; then
+    # PrivateKey 可用性
+    if xray x25519 -i "$(jq -r '.inbounds[0].streamSettings.realitySettings.privateKey' "$CONFIG")" >/dev/null 2>&1; then
         ok "PrivateKey usable"
     else
         bad "PrivateKey invalid"
@@ -107,6 +102,25 @@ verify_reality() {
     echo "------------------------------"
     echo "Passed : $pass"
     echo "Failed : $fail"
+
+    if [[ -f /etc/plachta/reality/client.env ]]; then
+        source /etc/plachta/reality/client.env
+
+        server_ip="$(curl -4 -fsSL https://api.ipify.org 2>/dev/null || echo "Unknown")"
+
+        uri="vless://${UUID}@${server_ip}:${PORT}?type=tcp&security=reality&pbk=${PUBLIC_KEY}&sid=${SHORT_ID}&sni=${SERVER_NAME}&fp=chrome&flow=xtls-rprx-vision&encryption=none#Plachta-Reality"
+
+        echo
+        echo "Current Server"
+        echo "------------------------------"
+        echo "IP   : $server_ip"
+        echo "Port : $PORT"
+
+        echo
+        echo "Import URI"
+        echo "------------------------------"
+        echo "$uri"
+    fi
 
     if [[ $fail -eq 0 ]]; then
         echo
