@@ -10,7 +10,11 @@ generate_subscription() {
 
     : > "$output_file"
 
-    subscription_add_provider reality_uri >> "$output_file"
+    while read -r provider; do
+
+        subscription_add_provider "${provider}_uri" >> "$output_file"
+
+    done < <(subscription_provider_list)
 
     log_success "Subscription generated:"
     echo "$output_file"
