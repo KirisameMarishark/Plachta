@@ -1,22 +1,42 @@
 # Plachta Architecture
 
-## Overview
+## Philosophy
 
-Plachta is a modular VPS deployment framework focused on:
+Plachta is a modular VPS deployment framework.
 
-- Security
+Goals:
+
+- Simplicity
 - Maintainability
-- Automation
-- Low fingerprint
-- Reproducible deployment
+- Reproducibility
+- Security
+- Extensibility
 
 Every feature is implemented as an independent module.
+
+Core never depends on modules.
+
+Modules never depend on each other.
+
+---
+
+# Repository Layout
+
+```
+cmd/
+internal/
+lib/
+modules/
+templates/
+runtime/
+docs/
+```
 
 ---
 
 # Core
 
-Core libraries never depend on modules.
+Core provides common capabilities shared by all modules.
 
 ```
 Core
@@ -26,23 +46,26 @@ Core
 ├── Error
 ├── Package
 ├── Service
-├── Prerequisite
+├── Download
 ├── Metadata
-└── System
+├── System
+└── Prerequisite
 ```
+
+Core libraries must never contain protocol-specific logic.
 
 ---
 
-# Modules
+# Module Layout
 
-Each module must contain:
+Every module must contain:
 
 ```
-README.md
 install.sh
 verify.sh
 config.sh
 service.sh
+README.md
 ```
 
 Optional:
@@ -50,12 +73,76 @@ Optional:
 ```
 backup.sh
 health.sh
+show.sh
 uninstall.sh
 ```
 
-Modules should never call each other directly.
+Modules never call other modules directly.
 
-Communication must go through Core libraries.
+Modules communicate only through Core libraries.
+
+---
+
+# Internal Layout
+
+Each protocol owns an internal implementation directory.
+
+Example:
+
+```
+internal/
+    reality/
+        generate.sh
+        read.sh
+        write.sh
+        uri.sh
+        validate.sh
+
+    tuic/
+
+    hysteria2/
+```
+
+Responsibilities:
+
+```
+generate.sh
+    Generate configuration
+
+read.sh
+    Load configuration
+
+write.sh
+    Modify configuration
+
+uri.sh
+    Generate client URI
+
+validate.sh
+    Validate configuration
+```
+
+No file should have multiple responsibilities.
+
+---
+
+# Single Source of Truth
+
+Every module has exactly one configuration source.
+
+For Reality:
+
+```
+/etc/plachta/reality/config.json
+```
+
+All commands must read from the same configuration.
+
+Never duplicate runtime state.
+
+Temporary files are allowed.
+
+Persistent duplicated configuration is not.
 
 ---
 
@@ -65,27 +152,34 @@ Templates are read-only.
 
 Examples:
 
-- nftables.conf
-- xray.json
-- systemd.service
+```
+xray.json
+
+nftables.conf
+
+systemd.service
+```
 
 Modules generate runtime configuration from templates.
 
+Templates must never be modified directly.
+
 ---
 
-# Configuration
+# Configuration Priority
 
-Configuration priority:
+Configuration precedence:
 
 ```
-CLI
-↓
-
-User Config
+CLI Arguments
 
 ↓
 
-Default Config
+User Configuration
+
+↓
+
+Module Defaults
 
 ↓
 
@@ -94,42 +188,86 @@ Built-in Defaults
 
 ---
 
-# Plugin Principle
+# Plugin Principles
 
-Every module should be:
+Every module must be:
 
 - Installable
 - Verifiable
 - Replaceable
 - Idempotent
 
-Running install twice must not break the system.
+Running install multiple times must never break an existing deployment.
 
 ---
 
 # Error Handling
 
-Only Core handles fatal errors.
+Core handles fatal errors.
 
 Modules return status.
 
+Never exit unexpectedly inside reusable libraries.
+
 ---
 
-# Future
+# Public Interface
 
-Plachta v1 focuses on:
+Every module exposes the same interface.
+
+Example:
+
+```
+plachta install reality
+
+plachta verify reality
+
+plachta show reality
+
+plachta config reality
+```
+
+Future modules must follow the exact same command structure.
+
+---
+
+# Coding Principles
+
+Each function should have one responsibility.
+
+Avoid duplicated logic.
+
+Avoid duplicated configuration parsing.
+
+Shared functionality belongs in Core or internal/.
+
+---
+
+# Future Roadmap
+
+Version 1
 
 - Debian 12
 - Xray Reality
-- TUIC
 - nftables
 - SSH Hardening
 - Fail2ban
 - DNS Optimization
 
-Future versions may support:
+Version 2
 
+- TUIC
 - Hysteria2
 - Sing-box
+
+Version 3
+
+- Subscription
+- Auto IP Update
+- Multiple Node Management
+
+Version 4
+
 - Docker
 - Web UI
+- REST API
