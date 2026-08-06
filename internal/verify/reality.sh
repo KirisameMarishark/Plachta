@@ -1,7 +1,16 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+source "${ROOT_DIR}/internal/reality/validate.sh"
+
 verify_reality() {
+    if validate_reality; then
+    echo "Basic validation passed."
+    else
+    echo "Basic validation failed."
+    fi
+
+    echo
     local pass=0
     local fail=0
 
