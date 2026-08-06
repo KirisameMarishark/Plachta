@@ -53,6 +53,7 @@ source "${ROOT_DIR}/lib/download.sh"
 source "${ROOT_DIR}/internal/show/reality.sh"
 source "${ROOT_DIR}/internal/verify/reality.sh"
 source "${ROOT_DIR}/internal/json.sh"
+source "${ROOT_DIR}/internal/subscription/generate.sh"
 
 config_init
 case "${1:-help}" in
@@ -120,6 +121,22 @@ case "${1:-help}" in
                 ;;
         esac
         ;;
+    
+    subscription)
+    case "${2:-reality}" in
+        reality)
+            generate_subscription
+
+            echo
+            echo "Subscription generated:"
+            echo "/etc/plachta/subscription/reality.txt"
+            ;;
+        *)
+            echo "Usage:"
+            echo "  plachta subscription reality"
+            ;;
+    esac
+    ;;
         
     config)
     case "${2:-show}" in
