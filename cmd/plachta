@@ -54,17 +54,20 @@ source "${ROOT_DIR}/internal/show/reality.sh"
 source "${ROOT_DIR}/internal/verify/reality.sh"
 source "${ROOT_DIR}/internal/json.sh"
 source "${ROOT_DIR}/internal/subscription/generate.sh"
+source "${ROOT_DIR}/cmd/install.sh"
+source "${ROOT_DIR}/cmd/show.sh"
+source "${ROOT_DIR}/cmd/verify.sh"
+source "${ROOT_DIR}/cmd/config.sh"
+source "${ROOT_DIR}/cmd/system.sh"
+source "${ROOT_DIR}/cmd/modules.sh"
+source "${ROOT_DIR}/cmd/module_info.sh"
 
 config_init
 case "${1:-help}" in
     system)
-
-    echo "Operating System : $(system_os)"
-    echo "Version          : $(system_version)"
-    echo "Architecture     : $(system_arch)"
-    echo "Kernel           : $(system_kernel)"
-    echo "Hostname         : $(system_hostname)"
-    ;;
+        cmd_system
+        ;;
+        
     version|-v|--version)
         echo "Plachta $(get_version)"
         ;;
@@ -74,16 +77,10 @@ case "${1:-help}" in
         ;;
 
     install)
-    if [[ -z "${2:-}" ]]; then
-        echo "Usage:"
-        echo "  plachta install <module>"
-        exit 1
-    fi
 
-    log_info "Installing module: $2"
-    module_install "$2"
-    log_success "Install finished."
-    ;;
+        cmd_install "$@"
+
+        ;;
 
     update)
         echo "Update module (coming soon)"
@@ -94,32 +91,15 @@ case "${1:-help}" in
         ;;
 
    verify)
-    if [[ -z "${2:-}" ]]; then
-        echo "Usage:"
-        echo "  plachta verify reality"
-        exit 1
-    fi
 
-    case "$2" in
-        reality)
-            verify_reality
-            ;;
-        *)
-            module_verify "$2"
-            ;;
-    esac
-    ;;
+        cmd_verify "$@"
+
+        ;;
     
     show)
-        case "${2:-}" in
-            reality)
-                show_reality
-                ;;
-            *)
-                echo "Usage:"
-                echo "  plachta show reality"
-                ;;
-        esac
+
+        cmd_show "$@"
+
         ;;
     
     subscription)
@@ -139,28 +119,13 @@ case "${1:-help}" in
     ;;
         
     config)
-    case "${2:-show}" in
-        show)
-            cat "${CONFIG_FILE}"
-            ;;
-        get)
-            config_get "$3"
-            ;;
-        set)
-            config_set "$3" "$4"
-            log_success "Configuration updated."
-            ;;
-        *)
-            echo "Usage:"
-            echo "  plachta config show"
-            echo "  plachta config get <key>"
-            echo "  plachta config set <key> <value>"
-            ;;
-    esac
-    ;;
-    modules)
-        module_list
+        cmd_config "$@"
         ;;
+        
+    modules)
+        cmd_modules
+        ;;
+
     module-info)
     if [[ -z "${2:-}" ]]; then
         echo "Usage:"
@@ -168,16 +133,8 @@ case "${1:-help}" in
         exit 1
     fi
 
-    module_info "$2"
-    ;;
-    backup)
-        echo "Backup module (coming soon)"
+    module-info)
+        cmd_module_info "$@"
         ;;
-
-    *)
-        echo "Unknown command: $1"
-        echo
-        show_help
-        exit 1
-        ;;
+        
 esac
