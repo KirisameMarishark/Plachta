@@ -53,10 +53,13 @@ source "${ROOT_DIR}/lib/download.sh"
 source "${ROOT_DIR}/internal/show/reality.sh"
 source "${ROOT_DIR}/internal/verify/reality.sh"
 source "${ROOT_DIR}/internal/json.sh"
+source "${ROOT_DIR}/internal/subscription/provider.sh"
+source "${ROOT_DIR}/internal/subscription/reality.sh"
 source "${ROOT_DIR}/internal/subscription/generate.sh"
 source "${ROOT_DIR}/cmd/install.sh"
 source "${ROOT_DIR}/cmd/show.sh"
 source "${ROOT_DIR}/cmd/verify.sh"
+source "${ROOT_DIR}/cmd/subscription.sh"
 source "${ROOT_DIR}/cmd/config.sh"
 source "${ROOT_DIR}/cmd/system.sh"
 source "${ROOT_DIR}/cmd/modules.sh"
@@ -90,7 +93,7 @@ case "${1:-help}" in
         echo "Doctor module (coming soon)"
         ;;
 
-   verify)
+    verify)
 
         cmd_verify "$@"
 
@@ -103,38 +106,31 @@ case "${1:-help}" in
         ;;
     
     subscription)
-    case "${2:-reality}" in
-        reality)
-            generate_subscription
 
-            echo
-            echo "Subscription generated:"
-            echo "/etc/plachta/subscription/reality.txt"
-            ;;
-        *)
-            echo "Usage:"
-            echo "  plachta subscription reality"
-            ;;
-    esac
-    ;;
-        
-    config)
-        cmd_config "$@"
+        cmd_subscription "$@"
+
         ;;
         
+        config)
+        cmd_config "$@"
+        ;;
+
     modules)
         cmd_modules
         ;;
 
     module-info)
-    if [[ -z "${2:-}" ]]; then
-        echo "Usage:"
-        echo "  plachta module-info <module>"
-        exit 1
-    fi
-
-    module-info)
         cmd_module_info "$@"
         ;;
-        
+
+    backup)
+        echo "Backup module (coming soon)"
+        ;;
+
+    *)
+        echo "Unknown command: ${1:-}"
+        echo
+        show_help
+        exit 1
+        ;;
 esac

@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-source "${ROOT_DIR}/internal/reality/uri.sh"
-
 generate_subscription() {
 
-    mkdir -p /etc/plachta/subscription
+    local output_dir="/etc/plachta/subscription"
+    local output_file="${output_dir}/sub.txt"
 
-    reality_generate_uri >/etc/plachta/subscription/reality.txt
+    mkdir -p "$output_dir"
+
+    : > "$output_file"
+
+    subscription_add_provider reality_uri >> "$output_file"
+
+    log_success "Subscription generated:"
+    echo "$output_file"
 
 }
