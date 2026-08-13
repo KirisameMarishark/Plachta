@@ -67,9 +67,9 @@ func (c Config) PublicKey() (string, error) {
 	for _, line := range strings.Split(string(output), "\n") {
 		line = strings.TrimSpace(line)
 
-		if strings.HasPrefix(line, "PublicKey:") {
+		if strings.HasPrefix(line, "Password (PublicKey):") {
 			return strings.TrimSpace(
-				strings.TrimPrefix(line, "PublicKey:"),
+				strings.TrimPrefix(line, "Password (PublicKey):"),
 			), nil
 		}
 
