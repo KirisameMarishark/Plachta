@@ -18,13 +18,6 @@ generate_reality_config() {
     shortid="$(reality_generate_shortid)"
 
     cat >/etc/plachta/reality/config.json <<EOF
-    cat >/etc/plachta/reality/client.env <<EOF
-    UUID=$uuid
-    PUBLIC_KEY=$public_key
-    SHORT_ID=$shortid
-    SERVER_NAME=www.cloudflare.com
-    PORT=443
-    EOF
 {
   "log": {
     "loglevel": "warning"
