@@ -27,5 +27,10 @@ EOF
     systemctl daemon-reload
 
     ensure_service_enabled xray
-    ensure_service_running xray
+
+    if systemctl is-active --quiet xray; then
+        service_restart xray
+    else
+        service_start xray
+    fi
 }
