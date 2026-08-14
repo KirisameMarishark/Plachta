@@ -11,6 +11,7 @@ import (
 	"github.com/KirisameMarishark/Plachta/internal/core/cli"
 	"github.com/KirisameMarishark/Plachta/internal/core/config"
 	"github.com/KirisameMarishark/Plachta/internal/core/reality"
+	"github.com/KirisameMarishark/Plachta/internal/core/subscription"
 	"github.com/KirisameMarishark/Plachta/internal/core/system"
 )
 
@@ -34,6 +35,9 @@ func main() {
 
 	case "reality":
 		handleReality(args)
+
+	case "subscription":
+		handleSubscription(args)
 
 	case "config":
 		if err := cli.HandleConfig(args, config.New()); err != nil {
@@ -196,5 +200,29 @@ func handleReality(args []string) {
 		fmt.Println("  plachta-go reality read")
 		fmt.Println("  plachta-go reality verify")
 		fmt.Println("  plachta-go reality uri")
+	}
+}
+
+func handleSubscription(args []string) {
+	if len(args) < 2 {
+		fmt.Println("Usage:")
+		fmt.Println("  plachta-go subscription generate")
+		return
+	}
+
+	switch args[1] {
+	case "generate":
+		path, err := subscription.New().Generate()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		fmt.Println("Subscription generated:")
+		fmt.Println(path)
+
+	default:
+		fmt.Println("Usage:")
+		fmt.Println("  plachta-go subscription generate")
 	}
 }
