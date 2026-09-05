@@ -27,10 +27,14 @@ type settings struct {
 }
 
 type streamSettings struct {
+	Security        string          `json:"security"`
 	RealitySettings realitySettings `json:"realitySettings"`
 }
 
 type realitySettings struct {
+	Show        bool     `json:"show"`
+	Dest        string   `json:"dest"`
+	XVer        int      `json:"xver"`
 	PrivateKey  string   `json:"privateKey"`
 	ShortIDs    []string `json:"shortIds"`
 	ServerNames []string `json:"serverNames"`
@@ -39,6 +43,12 @@ type realitySettings struct {
 func New() Config {
 	return Config{
 		Path: defaultConfigPath,
+	}
+}
+
+func NewWithPath(path string) Config {
+	return Config{
+		Path: path,
 	}
 }
 

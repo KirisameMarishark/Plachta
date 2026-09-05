@@ -13,6 +13,7 @@ import (
 	"github.com/KirisameMarishark/Plachta/internal/core/reality"
 	"github.com/KirisameMarishark/Plachta/internal/core/subscription"
 	"github.com/KirisameMarishark/Plachta/internal/core/system"
+	"github.com/KirisameMarishark/Plachta/internal/core/version"
 )
 
 func main() {
@@ -32,6 +33,9 @@ func main() {
 
 	case "system":
 		showSystem()
+
+	case "install":
+		handleInstall(args)
 
 	case "reality":
 		handleReality(args)
@@ -54,15 +58,7 @@ func main() {
 }
 
 func getVersion() string {
-	root := projectRoot()
-	versionFile := filepath.Join(root, "VERSION")
-
-	data, err := os.ReadFile(versionFile)
-	if err != nil {
-		return "unknown"
-	}
-
-	return strings.TrimSpace(string(data))
+	return strings.TrimSpace(version.Value)
 }
 
 func projectRoot() string {
@@ -125,6 +121,28 @@ func forwardToLegacyCLI(args []string) error {
 	return cmd.Run()
 }
 
+func handleInstall(args []string) {
+	if len(args) < 2 {
+		fmt.Println("Usage:")
+		fmt.Println("  plachta install reality")
+		return
+	}
+
+	switch args[1] {
+	case "reality":
+		if err := reality.Install(); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		fmt.Println("Reality installation completed.")
+
+	default:
+		fmt.Println("Usage:")
+		fmt.Println("  plachta install reality")
+	}
+}
+
 func handleReality(args []string) {
 	cfg := reality.New()
 
@@ -133,10 +151,45 @@ func handleReality(args []string) {
 		fmt.Println("  plachta-go reality read")
 		fmt.Println("  plachta-go reality verify")
 		fmt.Println("  plachta-go reality uri")
+		fmt.Println("  plachta-go reality generate")
+		fmt.Println("  plachta-go reality install")
 		return
 	}
 
 	switch args[1] {
+	case "generate":
+		uuid, err := reality.GenerateUUID()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		keyPair, err := reality.GenerateKeyPair()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		shortID, err := reality.GenerateShortID()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		fmt.Println("UUID       :", uuid)
+		fmt.Println("PrivateKey :", keyPair.PrivateKey)
+		fmt.Println("PublicKey  :", keyPair.PublicKey)
+		fmt.Println("Hash32     :", keyPair.Hash32)
+		fmt.Println("ShortID    :", shortID)
+
+	case "install":
+		if err := reality.Install(); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		fmt.Println("Reality installation completed.")
+
 	case "read":
 		uuid, err := cfg.UUID()
 		if err != nil {
@@ -170,21 +223,35 @@ func handleReality(args []string) {
 		fmt.Println("ShortID    :", shortID)
 
 	case "verify":
-		result := cfg.Validate()
+		result := cfg.Verify()
 
 		fmt.Println("Reality Verify")
 		fmt.Println("------------------------------")
 
-		if result.Valid {
-			fmt.Println("✔ Reality configuration valid")
-			return
+		for _, check := range result.Checks {
+			if check.OK {
+				fmt.Println("✔", check.Name)
+			} else {
+				fmt.Println("✘", check.Name)
+			}
 		}
 
-		for _, err := range result.Errors {
-			fmt.Println("✘", err)
+		fmt.Println()
+		fmt.Println("Result")
+		fmt.Println("------------------------------")
+		fmt.Println("Passed :", result.Passed())
+		fmt.Println("Failed :", result.Failed())
+
+		if result.URI != "" {
+			fmt.Println()
+			fmt.Println("Import URI")
+			fmt.Println("------------------------------")
+			fmt.Println(result.URI)
 		}
 
-		os.Exit(1)
+		if !result.Valid() {
+			os.Exit(1)
+		}
 
 	case "uri":
 		uri, err := cfg.URI()
