@@ -10,6 +10,7 @@ import (
 
 	"github.com/KirisameMarishark/Plachta/internal/core/cli"
 	"github.com/KirisameMarishark/Plachta/internal/core/config"
+	"github.com/KirisameMarishark/Plachta/internal/core/firewall"
 	"github.com/KirisameMarishark/Plachta/internal/core/reality"
 	"github.com/KirisameMarishark/Plachta/internal/core/subscription"
 	"github.com/KirisameMarishark/Plachta/internal/core/system"
@@ -36,6 +37,9 @@ func main() {
 
 	case "install":
 		handleInstall(args)
+
+	case "firewall":
+		handleFirewall(args)
 
 	case "reality":
 		handleReality(args)
@@ -136,6 +140,14 @@ func handleInstall(args []string) {
 		}
 
 		fmt.Println("Reality installation completed.")
+
+	case "firewall":
+		if err := firewall.Install(); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		fmt.Println("Firewall installation completed.")
 
 	default:
 		fmt.Println("Usage:")
@@ -291,5 +303,25 @@ func handleSubscription(args []string) {
 	default:
 		fmt.Println("Usage:")
 		fmt.Println("  plachta-go subscription generate")
+	}
+}
+
+func handleFirewall(args []string) {
+	if len(args) < 2 {
+		fmt.Println("Usage:")
+		fmt.Println("  plachta-go firewall verify")
+		return
+	}
+
+	switch args[1] {
+	case "verify":
+		if err := firewall.Verify(); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+	default:
+		fmt.Println("Usage:")
+		fmt.Println("  plachta-go firewall verify")
 	}
 }
