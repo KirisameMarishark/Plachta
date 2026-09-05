@@ -11,6 +11,7 @@ import (
 	"github.com/KirisameMarishark/Plachta/internal/core/cli"
 	"github.com/KirisameMarishark/Plachta/internal/core/config"
 	"github.com/KirisameMarishark/Plachta/internal/core/firewall"
+	"github.com/KirisameMarishark/Plachta/internal/core/module"
 	"github.com/KirisameMarishark/Plachta/internal/core/reality"
 	"github.com/KirisameMarishark/Plachta/internal/core/subscription"
 	"github.com/KirisameMarishark/Plachta/internal/core/system"
@@ -40,6 +41,9 @@ func main() {
 
 	case "firewall":
 		handleFirewall(args)
+
+	case "modules":
+		handleModules()
 
 	case "reality":
 		handleReality(args)
@@ -455,5 +459,19 @@ func handleFirewall(args []string) {
 	default:
 		fmt.Println("Usage:")
 		fmt.Println("  plachta-go firewall verify")
+	}
+}
+
+func handleModules() {
+	root := projectRoot()
+
+	modules, err := module.List(root)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	for _, name := range modules {
+		fmt.Println(name)
 	}
 }
