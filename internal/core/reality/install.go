@@ -51,21 +51,47 @@ func installReality() error {
 	fmt.Println("Reality installation started.")
 	fmt.Println("Xray will restart during installation.")
 	fmt.Println("If this SSH connection uses the current Reality tunnel, the connection may disconnect.")
-	fmt.Println("Reconnect after a few seconds to verify the installation.")
+	fmt.Println("The new client configuration will be printed before the connection is interrupted.")
+	fmt.Println()
 
 	if err := requireCommand("systemctl"); err != nil {
 		return err
 	}
 
-	if err := installXrayBinary(); err != nil {
-		return err
-	}
-
+	// Generate the new Reality configuration while the current
+	// Xray process is still running.
 	if err := GenerateConfig(); err != nil {
 		return fmt.Errorf("failed to generate Reality config: %w", err)
 	}
 
+	// Validate the newly generated configuration before replacing Xray.
 	if err := validateGeneratedConfig(); err != nil {
+		return err
+	}
+
+	// Read the newly generated configuration and build the import URI.
+	config := New()
+
+	uri, err := config.URI()
+	if err != nil {
+		return fmt.Errorf("failed to generate Reality import URI: %w", err)
+	}
+
+	fmt.Println("Reality configuration generated successfully.")
+	fmt.Println()
+	fmt.Println("Import URI")
+	fmt.Println("------------------------------")
+	fmt.Println(uri)
+	fmt.Println("------------------------------")
+	fmt.Println()
+	fmt.Println("The new configuration is ready.")
+	fmt.Println("Xray will now be restarted.")
+	fmt.Println()
+
+	// Only after the new configuration has been displayed do we
+	// replace the Xray binary. This may terminate the current SSH
+	// connection when SSH itself is using the Reality tunnel.
+	if err := installXrayBinary(); err != nil {
 		return err
 	}
 
