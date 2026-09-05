@@ -55,7 +55,14 @@ func main() {
 		handleSubscription(args)
 
 	case "config":
-		if err := cli.HandleConfig(args, config.New()); err != nil {
+		cfg := config.New()
+
+		if err := cfg.Init(); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		if err := cli.HandleConfig(args, cfg); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}

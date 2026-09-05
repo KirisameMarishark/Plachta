@@ -3,20 +3,27 @@ package config
 import (
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 )
+
+const defaultConfig = `# Plachta Configuration
+
+DNS=1.1.1.1
+MTU=1500
+LOG_LEVEL=info
+`
 
 func defaultConfigPath() string {
 	if path := os.Getenv("PLACTHA_CONFIG"); path != "" {
 		return path
 	}
 
-	if runtime.GOOS == "windows" {
-		return filepath.Join("configs", "default", "plachta.conf")
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return filepath.Join(".config", "plachta", "config.conf")
 	}
 
-	return "/etc/plachta/plachta.conf"
+	return filepath.Join(home, ".config", "plachta", "config.conf")
 }
 
 type Config struct {
@@ -27,6 +34,22 @@ func New() Config {
 	return Config{
 		Path: defaultConfigPath(),
 	}
+}
+
+func (c Config) Init() error {
+	if _, err := os.Stat(c.Path); err == nil {
+		return nil
+	} else if !os.IsNotExist(err) {
+		return err
+	}
+
+	dir := filepath.Dir(c.Path)
+
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return err
+	}
+
+	return os.WriteFile(c.Path, []byte(defaultConfig), 0644)
 }
 
 func (c Config) Exists() bool {
