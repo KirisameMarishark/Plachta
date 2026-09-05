@@ -45,6 +45,9 @@ func main() {
 	case "modules":
 		handleModules()
 
+	case "module-info":
+		handleModuleInfo(args)
+
 	case "reality":
 		handleReality(args)
 
@@ -473,5 +476,48 @@ func handleModules() {
 
 	for _, name := range modules {
 		fmt.Println(name)
+	}
+}
+
+func handleModuleInfo(args []string) {
+	if len(args) < 2 {
+		fmt.Println("Usage:")
+		fmt.Println("  plachta module-info <module>")
+		return
+	}
+
+	root := projectRoot()
+
+	info, err := module.InfoOf(root, args[1])
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	fmt.Printf("Module : %s\n", info.Name)
+	fmt.Printf("Path   : %s\n", info.Path)
+
+	if info.Readme {
+		fmt.Println("README : yes")
+	} else {
+		fmt.Println("README : no")
+	}
+
+	if info.Install {
+		fmt.Println("Install: yes")
+	} else {
+		fmt.Println("Install: no")
+	}
+
+	if info.Verify {
+		fmt.Println("Verify : yes")
+	} else {
+		fmt.Println("Verify : no")
+	}
+
+	if info.Config {
+		fmt.Println("Config : yes")
+	} else {
+		fmt.Println("Config : no")
 	}
 }
