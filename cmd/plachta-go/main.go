@@ -53,6 +53,12 @@ func main() {
 			os.Exit(1)
 		}
 
+	case "verify":
+		handleVerify(args)
+
+	case "show":
+		handleShow(args)
+
 	default:
 		if err := forwardToLegacyCLI(args); err != nil {
 			fmt.Fprintln(os.Stderr, err)
@@ -88,6 +94,17 @@ func projectRoot() string {
 	}
 
 	return "."
+}
+
+func getServerIP() string {
+	cmd := exec.Command("curl", "-4", "-fsSL", "https://api.ipify.org")
+
+	output, err := cmd.Output()
+	if err != nil {
+		return "unknown"
+	}
+
+	return strings.TrimSpace(string(output))
 }
 
 func showSystem() {
@@ -152,6 +169,121 @@ func handleInstall(args []string) {
 	default:
 		fmt.Println("Usage:")
 		fmt.Println("  plachta install reality")
+	}
+}
+
+func handleVerify(args []string) {
+	if len(args) < 2 {
+		fmt.Println("Usage:")
+		fmt.Println("  plachta verify reality")
+		return
+	}
+
+	switch args[1] {
+	case "reality":
+		cfg := reality.New()
+		result := cfg.Verify()
+
+		fmt.Println("Reality Verify")
+		fmt.Println("------------------------------")
+
+		for _, check := range result.Checks {
+			if check.OK {
+				fmt.Println("✔", check.Name)
+			} else {
+				fmt.Println("✘", check.Name)
+			}
+		}
+
+		fmt.Println()
+		fmt.Println("Result")
+		fmt.Println("------------------------------")
+		fmt.Println("Passed :", result.Passed())
+		fmt.Println("Failed :", result.Failed())
+
+		if result.URI != "" {
+			fmt.Println()
+			fmt.Println("Import URI")
+			fmt.Println("------------------------------")
+			fmt.Println(result.URI)
+		}
+
+		if !result.Valid() {
+			os.Exit(1)
+		}
+
+	default:
+		fmt.Println("Usage:")
+		fmt.Println("  plachta verify reality")
+	}
+}
+
+func handleShow(args []string) {
+	if len(args) < 2 {
+		fmt.Println("Usage:")
+		fmt.Println("  plachta show reality")
+		return
+	}
+
+	switch args[1] {
+	case "reality":
+		cfg := reality.New()
+
+		uuid, err := cfg.UUID()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "Reality is not installed.")
+			os.Exit(1)
+		}
+
+		port, err := cfg.Port()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		publicKey, err := cfg.PublicKey()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		serverName, err := cfg.ServerName()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		shortID, err := cfg.ShortID()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		uri, err := cfg.URI()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		fmt.Println()
+		fmt.Println("Reality")
+		fmt.Println("------------------------------")
+		fmt.Println("Server     :", getServerIP())
+		fmt.Println("Port       :", port)
+		fmt.Println("UUID       :", uuid)
+		fmt.Println("Public Key :", publicKey)
+		fmt.Println("ServerName :", serverName)
+		fmt.Println("Short ID   :", shortID)
+		fmt.Println()
+
+		fmt.Println("Import URI:")
+		fmt.Println()
+		fmt.Println(uri)
+		fmt.Println()
+
+	default:
+		fmt.Println("Usage:")
+		fmt.Println("  plachta show reality")
 	}
 }
 
