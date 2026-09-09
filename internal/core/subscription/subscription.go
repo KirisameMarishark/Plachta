@@ -9,63 +9,65 @@ import (
 	"github.com/KirisameMarishark/Plachta/internal/core/subscription/providers"
 )
 
-const (
-	subscriptionDir  = "/etc/plachta/subscription"
-	subscriptionFile = "/etc/plachta/subscription/sub.txt"
-)
-
 type Provider interface {
 	Name() string
 	URI() (string, error)
 }
 
-type Generator struct {
+type Subscription struct {
+	OutputDir string
 	Providers []Provider
 }
 
-func New() Generator {
-	return Generator{
-		Providers: []Provider{
-			providers.NewRealityProvider(),
-		},
+func New() *Subscription {
+	return &Subscription{
+		OutputDir: "/etc/plachta/subscription",
+		Providers: ListProviders(),
 	}
 }
 
-func (g Generator) Generate() (string, error) {
-	if err := os.MkdirAll(subscriptionDir, 0755); err != nil {
+func ListProviders() []Provider {
+	return []Provider{
+		providers.NewRealityProvider(),
+	}
+}
+
+func (s *Subscription) Generate() (string, error) {
+	outputDir := s.OutputDir
+	if outputDir == "" {
+		outputDir = "/etc/plachta/subscription"
+	}
+
+	if err := os.MkdirAll(outputDir, 0755); err != nil {
 		return "", fmt.Errorf("create subscription directory: %w", err)
 	}
 
-	var uris []string
+	outputFile := filepath.Join(outputDir, "sub.txt")
 
-	for _, provider := range g.Providers {
+	var entries []string
+
+	for _, provider := range s.Providers {
 		uri, err := provider.URI()
 		if err != nil {
-			return "", fmt.Errorf("provider %s: %w", provider.Name(), err)
+			continue
 		}
 
 		uri = strings.TrimSpace(uri)
-
 		if uri == "" {
 			continue
 		}
 
-		uris = append(uris, uri)
+		entries = append(entries, uri)
 	}
 
-	content := strings.Join(uris, "\n")
-
-	if content != "" {
-		content += "\n"
+	content := ""
+	if len(entries) > 0 {
+		content = strings.Join(entries, "\n") + "\n"
 	}
 
-	if err := os.WriteFile(
-		subscriptionFile,
-		[]byte(content),
-		0644,
-	); err != nil {
+	if err := os.WriteFile(outputFile, []byte(content), 0644); err != nil {
 		return "", fmt.Errorf("write subscription file: %w", err)
 	}
 
-	return filepath.Clean(subscriptionFile), nil
+	return outputFile, nil
 }
