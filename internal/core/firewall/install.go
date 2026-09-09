@@ -77,7 +77,8 @@ func requireDebian() error {
 }
 
 func ensurePackage(name string) error {
-	if _, err := exec.LookPath(name); err == nil {
+	cmd := exec.Command("dpkg", "-s", name)
+	if err := cmd.Run(); err == nil {
 		return nil
 	}
 
