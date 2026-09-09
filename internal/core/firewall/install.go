@@ -1,9 +1,11 @@
 package firewall
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 func Install() error {
@@ -11,11 +13,15 @@ func Install() error {
 		return fmt.Errorf("firewall install requires root privileges")
 	}
 
+	if err := requireDebian(); err != nil {
+		return err
+	}
+
 	if err := requireCommand("systemctl"); err != nil {
 		return err
 	}
 
-	if err := requireCommand("nft"); err != nil {
+	if err := ensurePackage("nftables"); err != nil {
 		return err
 	}
 
@@ -33,6 +39,54 @@ func Install() error {
 
 	if err := runCommand("nft", "-f", rulesetPath); err != nil {
 		return fmt.Errorf("failed to load firewall rules: %w", err)
+	}
+
+	return nil
+}
+
+func requireDebian() error {
+	file, err := os.Open("/etc/os-release")
+	if err != nil {
+		return fmt.Errorf("cannot determine operating system: %w", err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+
+		if !strings.HasPrefix(line, "ID=") {
+			continue
+		}
+
+		id := strings.Trim(strings.TrimPrefix(line, "ID="), `"`)
+
+		if id != "debian" {
+			return fmt.Errorf("only Debian is supported")
+		}
+
+		return nil
+	}
+
+	if err := scanner.Err(); err != nil {
+		return fmt.Errorf("failed to read /etc/os-release: %w", err)
+	}
+
+	return fmt.Errorf("operating system ID not found in /etc/os-release")
+}
+
+func ensurePackage(name string) error {
+	if _, err := exec.LookPath(name); err == nil {
+		return nil
+	}
+
+	if err := runCommand("apt-get", "update"); err != nil {
+		return fmt.Errorf("failed to update package index: %w", err)
+	}
+
+	if err := runCommand("apt-get", "install", "-y", name); err != nil {
+		return fmt.Errorf("failed to install package %q: %w", name, err)
 	}
 
 	return nil
