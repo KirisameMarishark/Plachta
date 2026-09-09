@@ -125,12 +125,14 @@ func showSystem() {
 	info := system.Get()
 
 	fmt.Printf("Operating System : %s\n", info.OS)
+	fmt.Printf("Version          : %s\n", info.Version)
 	fmt.Printf("Architecture     : %s\n", info.Architecture)
+	fmt.Printf("Kernel           : %s\n", info.Kernel)
 	fmt.Printf("Hostname         : %s\n", info.Hostname)
-
-	if runtime.GOOS == "windows" {
-		return
-	}
+	fmt.Printf("IPv4             : %s\n", info.IPv4)
+	fmt.Printf("IPv6             : %s\n", info.IPv6)
+	fmt.Printf("Memory           : %d MB\n", info.MemoryMB)
+	fmt.Printf("CPU              : %d\n", info.CPUCount)
 }
 
 func forwardToLegacyCLI(args []string) error {
