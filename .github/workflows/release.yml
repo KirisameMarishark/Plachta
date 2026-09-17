@@ -75,4 +75,5 @@ jobs:
             release/plachta-linux-amd64 \
             release/plachta-linux-arm64 \
             --repo "${{ github.repository }}" \
+            --title "Plachta A23" \
             --generate-notes
