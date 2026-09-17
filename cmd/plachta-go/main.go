@@ -465,7 +465,14 @@ func handleExport(args []string) {
 		fmt.Println(uri)
 
 	case "quantumultx":
-		fmt.Println("Quantumult X export (coming soon)")
+		config := reality.New()
+		line, err := config.QuantumultX()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		fmt.Println(line)
 
 	default:
 		fmt.Println("Usage:")
