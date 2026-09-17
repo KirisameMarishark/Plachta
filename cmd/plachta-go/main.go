@@ -73,6 +73,9 @@ func main() {
 	case "show":
 		handleShow(args)
 
+	case "export":
+		handleExport(args)
+
 	default:
 		if err := forwardToLegacyCLI(args); err != nil {
 			fmt.Fprintln(os.Stderr, err)
@@ -182,6 +185,9 @@ func handleInstall(args []string) {
 
 		fmt.Println("Firewall installation completed.")
 
+	case "export":
+		handleExport(args)
+
 	default:
 		fmt.Println("Usage:")
 		fmt.Println("  plachta install reality")
@@ -227,6 +233,9 @@ func handleVerify(args []string) {
 		if !result.Valid() {
 			os.Exit(1)
 		}
+
+	case "export":
+		handleExport(args)
 
 	default:
 		fmt.Println("Usage:")
@@ -296,6 +305,9 @@ func handleShow(args []string) {
 		fmt.Println()
 		fmt.Println(uri)
 		fmt.Println()
+
+	case "export":
+		handleExport(args)
 
 	default:
 		fmt.Println("Usage:")
@@ -422,11 +434,44 @@ func handleReality(args []string) {
 
 		fmt.Println(uri)
 
+	case "export":
+		handleExport(args)
+
 	default:
 		fmt.Println("Usage:")
 		fmt.Println("  plachta-go reality read")
 		fmt.Println("  plachta-go reality verify")
 		fmt.Println("  plachta-go reality uri")
+	}
+}
+
+func handleExport(args []string) {
+	if len(args) < 2 {
+		fmt.Println("Usage:")
+		fmt.Println("  plachta export nekobox")
+		fmt.Println("  plachta export throne")
+		fmt.Println("  plachta export quantumultx")
+		return
+	}
+
+	switch args[1] {
+	case "nekobox", "throne":
+		uri, err := reality.New().URI()
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		fmt.Println(uri)
+
+	case "quantumultx":
+		fmt.Println("Quantumult X export (coming soon)")
+
+	default:
+		fmt.Println("Usage:")
+		fmt.Println("  plachta export nekobox")
+		fmt.Println("  plachta export throne")
+		fmt.Println("  plachta export quantumultx")
 	}
 }
 
@@ -448,6 +493,9 @@ func handleSubscription(args []string) {
 		fmt.Println("Subscription generated:")
 		fmt.Println(path)
 
+	case "export":
+		handleExport(args)
+
 	default:
 		fmt.Println("Usage:")
 		fmt.Println("  plachta-go subscription generate")
@@ -467,6 +515,9 @@ func handleFirewall(args []string) {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
+
+	case "export":
+		handleExport(args)
 
 	default:
 		fmt.Println("Usage:")
