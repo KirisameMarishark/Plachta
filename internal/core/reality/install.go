@@ -239,22 +239,7 @@ func installXrayBinary() error {
 		)
 	}
 
-	if err := scheduleXrayRecovery(); err != nil {
-		return err
-	}
-
 	return nil
-}
-
-func scheduleXrayRecovery() error {
-	return runCommand(
-		"systemd-run",
-		"--unit=plachta-xray-recovery",
-		"--collect",
-		"/bin/systemctl",
-		"start",
-		"xray",
-	)
 }
 
 func runCommand(name string, args ...string) error {
