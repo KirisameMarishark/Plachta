@@ -36,6 +36,9 @@ func main() {
 	case "system":
 		showSystem()
 
+	case "status":
+		cli.ShowStatus()
+
 	case "install":
 		handleInstall(args)
 

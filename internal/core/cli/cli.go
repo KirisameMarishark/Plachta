@@ -11,6 +11,7 @@ func ShowHelp() {
 	fmt.Println()
 	fmt.Println("Commands:")
 	fmt.Println("  install      Install Plachta modules")
+	fmt.Println("  status       Show service status")
 	fmt.Println("  update       Update installed components")
 	fmt.Println("  doctor       Diagnose system status")
 	fmt.Println("  show         Show runtime information")
