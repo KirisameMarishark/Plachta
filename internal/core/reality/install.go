@@ -38,9 +38,12 @@ func Install() error {
 	}
 
 	if err := installReality(); err != nil {
-		if restoreErr := restoreRealityConfig(backupPath); restoreErr != nil {
-			return fmt.Errorf("%w; additionally failed to restore backup: %v", err, restoreErr)
+		if backupPath != "" {
+			if restoreErr := restoreRealityConfig(backupPath); restoreErr != nil {
+				return fmt.Errorf("%w; additionally failed to restore backup: %v", err, restoreErr)
+			}
 		}
+
 		return err
 	}
 
@@ -105,10 +108,15 @@ func installReality() error {
 func backupRealityConfig() (string, error) {
 	data, err := os.ReadFile(defaultRealityConfigPath)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return "", nil
+		}
+
 		return "", fmt.Errorf("failed to read existing Reality config: %w", err)
 	}
 
 	backupPath := defaultRealityConfigPath + ".bak"
+
 	if err := os.WriteFile(backupPath, data, 0600); err != nil {
 		return "", fmt.Errorf("failed to backup Reality config: %w", err)
 	}
