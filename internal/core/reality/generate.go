@@ -7,7 +7,11 @@ import (
 )
 
 func GenerateUUID() (string, error) {
-	output, err := exec.Command("xray", "uuid").Output()
+	return generateUUIDWithBinary("xray")
+}
+
+func generateUUIDWithBinary(xrayPath string) (string, error) {
+	output, err := exec.Command(xrayPath, "uuid").Output()
 	if err != nil {
 		return "", fmt.Errorf("failed to generate UUID: %w", err)
 	}
@@ -41,7 +45,11 @@ type GeneratedKeyPair struct {
 }
 
 func GenerateKeyPair() (GeneratedKeyPair, error) {
-	output, err := exec.Command("xray", "x25519").CombinedOutput()
+	return generateKeyPairWithBinary("xray")
+}
+
+func generateKeyPairWithBinary(xrayPath string) (GeneratedKeyPair, error) {
+	output, err := exec.Command(xrayPath, "x25519").CombinedOutput()
 	if err != nil {
 		return GeneratedKeyPair{}, fmt.Errorf(
 			"failed to generate Reality keypair: %w: %s",
