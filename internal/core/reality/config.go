@@ -96,12 +96,16 @@ func buildRealityConfig(uuid string, keyPair GeneratedKeyPair, shortID string) g
 }
 
 func GenerateConfig() error {
-	uuid, err := GenerateUUID()
+	return GenerateConfigWithBinary("xray")
+}
+
+func GenerateConfigWithBinary(xrayPath string) error {
+	uuid, err := generateUUIDWithBinary(xrayPath)
 	if err != nil {
 		return err
 	}
 
-	keyPair, err := GenerateKeyPair()
+	keyPair, err := generateKeyPairWithBinary(xrayPath)
 	if err != nil {
 		return err
 	}

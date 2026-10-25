@@ -10,6 +10,10 @@ import (
 )
 
 func (c Config) URI() (string, error) {
+	return c.uriWithBinary("xray")
+}
+
+func (c Config) uriWithBinary(xrayPath string) (string, error) {
 	uuid, err := c.UUID()
 	if err != nil {
 		return "", err
@@ -30,7 +34,7 @@ func (c Config) URI() (string, error) {
 		return "", err
 	}
 
-	publicKey, err := c.PublicKey()
+	publicKey, err := c.publicKeyWithBinary(xrayPath)
 	if err != nil {
 		return "", err
 	}
@@ -52,13 +56,16 @@ func (c Config) URI() (string, error) {
 }
 
 func (c Config) PublicKey() (string, error) {
+	return c.publicKeyWithBinary("xray")
+}
+
+func (c Config) publicKeyWithBinary(xrayPath string) (string, error) {
 	privateKey, err := c.PrivateKey()
 	if err != nil {
 		return "", err
 	}
 
-	cmd := exec.Command("xray", "x25519", "-i", privateKey)
-
+	cmd := exec.Command(xrayPath, "x25519", "-i", privateKey)
 	output, err := cmd.Output()
 	if err != nil {
 		return "", fmt.Errorf("failed to generate Reality public key: %w", err)
